@@ -1,10 +1,10 @@
-all : start main.o lexer.o
+all : compile 
+	
+compile:main.o lexer.o
+	@echo "Start compile."
 	g++ -o main.out main.o lexer.o -O3
 	@echo "End compile."
-	@echo ""
-
-start:
-	@echo "Start compile."
+	@echo "------------------------------"
 
 main.o:
 	g++ main.cpp -c -O3
@@ -12,12 +12,11 @@ main.o:
 lexer.o:
 	g++ lexer.cpp -c -O3
 
-
 dep:
 	@echo "nothing"
 
 clean:
-	@echo "Clean main.out & *.o."
+	@echo "Start clean."
 	rm -f main.out *.o
 	@echo "Finished clean."
-	@echo ""
+	@echo "------------------------------"

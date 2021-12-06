@@ -46,10 +46,22 @@ class Word : public Token
 {
 public:
     string lexeme = "";
+    static Word And, Or, eq, ne, le, ge, minus, True, False, temp;
 
     Word(string s, int tag);
     string toString();
-    static Word And, Or, eq, ne, le, ge, minus, True, False, temp;
+};
+
+class Type : public Word
+{
+public:
+    int width = 0;
+    static Type Int, Float, Char, Bool, Null;
+
+    Type(string s, int tag, int w);
+    static bool numeric(Type p);
+    static Type max(Type p1, Type p2);
+    friend bool operator==(Type &x, Type &y);
 };
 
 class Lexer
