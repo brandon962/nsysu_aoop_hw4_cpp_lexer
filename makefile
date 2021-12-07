@@ -10,7 +10,7 @@ main.o:
 	g++ main.cpp -c -O3
 
 lexer.o:
-	g++ lexer.cpp -c -O3
+	g++ lexer.cpp -c
 
 dep:
 	@echo "nothing"

@@ -1,29 +1,15 @@
 #include <iostream>
 #include <exception>
+#include "lexer.h"
 
 using namespace std;
 
 int main()
 {
-
-    class MyException : public std::exception
-    {
-    public:
-        string s;
-
-        MyException(string ss) : s(ss) {}
-        ~MyException() throw() {}
-        const char *what() const throw() { return s.c_str(); }
-    };
-
-    try
-    {
-        throw MyException("End of file readched");
-    }
-    catch (MyException &caught)
-    {
-        std::cout << "Got " << caught.what() << std::endl;
-    }
-
+    map<string, string> w;
+    w.insert(pair<string, string>("1","123"));
+    cout << w.find("1")->first << endl;
+    cout << (("1")[w]) << endl;
+    
     return 0;
 }

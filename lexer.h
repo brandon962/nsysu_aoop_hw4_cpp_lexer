@@ -6,6 +6,7 @@
 #include <string>
 #include <fstream>
 #include <exception>
+#include <cctype>
 
 using std::map;
 using std::string;
@@ -107,6 +108,7 @@ public:
     Lexer();
     ~Lexer();
     void set_readfile(string filename);
+    Token scan();
 
 private:
     string readfile;
@@ -117,7 +119,6 @@ private:
     void reserve(Word w);
     void readch();
     bool readch(char c);
-    Token scan();
 };
 
 #endif

@@ -43,7 +43,7 @@ Type Type::max(Type p1, Type p2)
 {
     if (!numeric(p1) || !numeric(p2))
     {
-        std::cerr << "Error: in class Type in max function return null" << std::endl;
+        std::cout << "Error: in class Type in max function return null" << std::endl;
         return Type::Null;
     }
     else if (p1 == Type::Float || p2 == Type::Float)
@@ -87,7 +87,7 @@ Lexer::Lexer()
     reserve(Type::Null);
 }
 
-Lexer::~Lexer() {}
+Lexer::~Lexer() { fp.close(); }
 
 void Lexer::set_readfile(string filename)
 {
@@ -122,5 +122,86 @@ Token Lexer::scan()
     {
         if (peek == ' ' || peek == '\t')
             continue;
+        else if (peek == '\n')
+            ++line;
+        else
+            break;
     }
+    switch (peek)
+    {
+    case '&':
+        if (readch('&'))
+            return Word::And;
+        else
+            return Token('&');
+    case '|':
+        if (readch('|'))
+            return Word::Or;
+        else
+            return Token('|');
+    case '=':
+        if (readch('='))
+            return Word::eq;
+        else
+            return Token('=');
+    case '!':
+        if (readch('='))
+            return Word::ne;
+        else
+            return Token('!');
+    case '<':
+        if (readch('='))
+            return Word::le;
+        else
+            return Token('<');
+    case '>':
+        if (readch('='))
+            return Word::ge;
+        else
+            return Token('>');
+    }
+
+    if (isdigit(peek))
+    {
+        int v = 0;
+        do
+        {
+            v = 10 * v + isdigit(peek);
+            readch();
+        } while (isdigit(peek));
+        if (peek != '.')
+            return Num(v);
+        float x = v;
+        float d = 10;
+        for (;;)
+        {
+            readch();
+            if (!isdigit(peek))
+                break;
+            x += (peek - '0') / d;
+            d *= 10;
+        }
+        return Real(x);
+    }
+
+    if (isalpha(peek))
+    {
+        string b = "";
+        do
+        {
+            b += peek;
+            readch();
+        } while (isalnum(peek));
+
+        auto iter = words.find(b);
+        if (iter != words.end())
+            return iter->second;
+        Word w = Word(b, Tag::ID);
+        words.insert(pair<string, Word>(b, w));
+        return w;
+    }
+
+    Token tok = Token(peek);
+    peek = ' ';
+    return tok;
 }

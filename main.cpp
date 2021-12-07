@@ -8,8 +8,22 @@ using std::endl;
 int main()
 {
     Lexer lexer;
+    string readfile = "test_program1.txt";
 
+    lexer.set_readfile(readfile);
 
-    cout << "done" << endl;
+    try 
+    {
+        while (true)
+        {
+            Token t = lexer.scan();
+            cout << t.toString() << endl;
+        }
+    }
+    catch (MyException &e)
+    {
+        cout << e.what() << endl;
+    }
+
     return 0;
 }
