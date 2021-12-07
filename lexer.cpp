@@ -46,6 +46,10 @@ Type Type::max(Type p1, Type p2)
         std::cerr << "Error: in class Type in max function return null" << std::endl;
         return Type::Null;
     }
+    else if (p1 == Type::Float || p2 == Type::Float)
+        return Type::Float;
+    else if (p1 == Type::Int || p2 == Type::Int)
+        return Type::Int;
     else
         return Type::Char;
 }
@@ -55,14 +59,68 @@ Type Type::Float = Type("float", Tag::BASIC, 8);
 Type Type::Char = Type("char", Tag::BASIC, 1);
 Type Type::Bool = Type("bool", Tag::BASIC, 1);
 Type Type::Null = Type("null", Tag::BASIC, 1);
+// CLASS NUM --------------------------------------
+Num::Num(int v) : Token(Tag::NUM) { value = v; }
+
+string Num::toString() { return std::to_string(value); }
+
+// CLASS REAL -------------------------------------
+Real::Real(float v) : Token(Tag::REAL) { value = v; }
+
+string Real::toString() { return std::to_string(value); }
+
 // CLASS LEXER ------------------------------------
 int Lexer::line = 1;
 Lexer::Lexer()
 {
+    reserve(Word("if", Tag::IF));
+    reserve(Word("else", Tag::ELSE));
+    reserve(Word("while", Tag::WHILE));
+    reserve(Word("do", Tag::DO));
+    reserve(Word("break", Tag::BREAK));
+    reserve(Word::True);
+    reserve(Word::False);
+    reserve(Type::Int);
+    reserve(Type::Char);
+    reserve(Type::Bool);
+    reserve(Type::Float);
+    reserve(Type::Null);
 }
 
 Lexer::~Lexer() {}
 
-void Lexer::reserve(Word w)
+void Lexer::set_readfile(string filename)
 {
+    readfile = filename;
+    fp.open(readfile, ios::in);
+}
+
+void Lexer::reserve(Word w) { words.insert(std::pair<string, Word>(w.lexeme, w)); }
+
+void Lexer::readch()
+{
+    char c;
+    fp.get(c);
+    if (c)
+        peek = c;
+    else
+        throw MyException("End of file readched");
+}
+
+bool Lexer::readch(char c)
+{
+    readch();
+    if (peek != c)
+        return false;
+    peek = ' ';
+    return true;
+}
+
+Token Lexer::scan()
+{
+    for (;; readch())
+    {
+        if (peek == ' ' || peek == '\t')
+            continue;
+    }
 }

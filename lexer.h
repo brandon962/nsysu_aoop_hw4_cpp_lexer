@@ -4,9 +4,16 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <fstream>
+#include <exception>
 
 using std::map;
 using std::string;
+using std::pair;
+using std::ifstream;
+using std::ostream;
+using std::fstream;
+using std::ios;
 
 class Tag
 {
@@ -64,6 +71,34 @@ public:
     friend bool operator==(Type &x, Type &y);
 };
 
+class Num : public Token
+{
+public:
+    int value;
+
+    Num(int v);
+    string toString();
+};
+
+class Real : public Token
+{
+public:
+    float value;
+
+    Real(float v);
+    string toString();
+};
+
+class MyException : public std::exception
+{
+public:
+    string s;
+
+    MyException(string ss) : s(ss){}
+    ~MyException() throw () {}
+    const char* what() const throw() {return s.c_str();}
+};
+
 class Lexer
 {
 public:
@@ -71,12 +106,18 @@ public:
 
     Lexer();
     ~Lexer();
+    void set_readfile(string filename);
 
 private:
+    string readfile;
+    ifstream fp;
     char peek = ' ';
-    map<string, string> word;
-
+    map<string, Word> words;
+    
     void reserve(Word w);
+    void readch();
+    bool readch(char c);
+    Token scan();
 };
 
 #endif
