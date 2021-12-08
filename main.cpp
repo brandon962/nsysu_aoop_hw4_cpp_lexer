@@ -1,18 +1,33 @@
 #include <iostream>
 #include "lexer.h"
 
-
+using std::cin;
 using std::cout;
 using std::endl;
 
-int main()
+int main(int argc, char **argv)
 {
     Lexer lexer;
-    string readfile = "test_program1.txt";
+    string readfile;
 
-    lexer.set_readfile(readfile);
+    if (argc > 1)
+        readfile = argv[1];
+    else
+    {
+        cout << "while file want to scan: ";
+        cin >> readfile;
+    }
 
-    try 
+    std::ifstream file(readfile);
+    if (file.good())
+        lexer.set_readfile(readfile);
+    else
+    {
+        cout << "File not find, scan \"test_program1.txt\"." << endl;
+        lexer.set_readfile("test_program1.txt");
+    }
+
+    try
     {
         while (true)
         {

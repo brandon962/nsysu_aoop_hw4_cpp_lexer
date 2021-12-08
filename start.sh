@@ -1,6 +1,5 @@
 make clean
 make
 echo "Start run."
-# ./main.out > tmp.txt
-./main.out
+./main.out test_program1.txt
 echo "End run."

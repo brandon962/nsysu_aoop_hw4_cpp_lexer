@@ -1,12 +1,48 @@
 #include "lexer.h"
+// CLASS TAG --------------------------------------
+string Tag::AND = "AND";
+string Tag::BASIC = "BASIC";
+string Tag::BREAK = "BREAK";
+string Tag::DO = "DO";
+string Tag::ELSE = "ELSE";
+string Tag::EQ = "EQ";
+string Tag::FALSE = "FALSE";
+string Tag::GE = "GE";
+string Tag::ID = "ID";
+string Tag::IF = "IF";
+string Tag::INDEX = "INDEX";
+string Tag::LE = "LE";
+string Tag::MINUS = "MINUS";
+string Tag::NE = "NE";
+string Tag::NUM = "NUM";
+string Tag::OR = "OR";
+string Tag::REAL = "REAL";
+string Tag::TEMP = "TEMP";
+string Tag::TRUE = "TRUE";
+string Tag::WHILE = "WHILE";
 
 // CLASS TOKEN ------------------------------------
-Token::Token(int t) { tag = t; }
+Token::Token(string t, string i)
+{
+    tag = t;
+    item = i;
+}
+Token::Token(char t, string i)
+{
+    tag = t;
+    item = i;
+}
 
-string Token::toString() { return std::to_string(tag); }
+string Token::toString()
+{
+    // string output = "Toke: " + item;
+    // for (int )
+
+    return "Token: " + item + "\t(" + tag + ")";
+}
 
 // CLASS WORD -------------------------------------
-Word::Word(string s, int tag) : Token(tag) { lexeme = s; }
+Word::Word(string s, string tag) : Token(tag, s) { lexeme = s; }
 
 string Word::toString() { return lexeme; }
 
@@ -22,7 +58,7 @@ Word Word::False = Word("false", Tag::FALSE);
 Word Word::temp = Word("t", Tag::TEMP);
 
 // class TYPE -------------------------------------
-Type::Type(string s, int tag, int w) : Word(s, tag) { width = w; }
+Type::Type(string s, string tag, int w) : Word(s, tag) { width = w; }
 
 bool operator==(Type &x, Type &y)
 {
@@ -60,12 +96,12 @@ Type Type::Char = Type("char", Tag::BASIC, 1);
 Type Type::Bool = Type("bool", Tag::BASIC, 1);
 Type Type::Null = Type("null", Tag::BASIC, 1);
 // CLASS NUM --------------------------------------
-Num::Num(int v) : Token(Tag::NUM) { value = v; }
+Num::Num(int v) : Token(Tag::NUM, std::to_string(v)) { value = v; }
 
 string Num::toString() { return std::to_string(value); }
 
 // CLASS REAL -------------------------------------
-Real::Real(float v) : Token(Tag::REAL) { value = v; }
+Real::Real(float v) : Token(Tag::REAL, std::to_string(v)) { value = v; }
 
 string Real::toString() { return std::to_string(value); }
 
@@ -100,8 +136,7 @@ void Lexer::reserve(Word w) { words.insert(std::pair<string, Word>(w.lexeme, w))
 void Lexer::readch()
 {
     char c;
-    fp.get(c);
-    if (c)
+    if (fp.get(c))
         peek = c;
     else
         throw MyException("End of file readched");
@@ -127,38 +162,39 @@ Token Lexer::scan()
         else
             break;
     }
+
     switch (peek)
     {
     case '&':
         if (readch('&'))
             return Word::And;
         else
-            return Token('&');
+            return Token('&', "&");
     case '|':
         if (readch('|'))
             return Word::Or;
         else
-            return Token('|');
+            return Token('|', "|");
     case '=':
         if (readch('='))
             return Word::eq;
         else
-            return Token('=');
+            return Token('=', "=");
     case '!':
         if (readch('='))
             return Word::ne;
         else
-            return Token('!');
+            return Token('!', "!");
     case '<':
         if (readch('='))
             return Word::le;
         else
-            return Token('<');
+            return Token('<', "<");
     case '>':
         if (readch('='))
             return Word::ge;
         else
-            return Token('>');
+            return Token('>', ">");
     }
 
     if (isdigit(peek))
@@ -166,11 +202,13 @@ Token Lexer::scan()
         int v = 0;
         do
         {
-            v = 10 * v + isdigit(peek);
+            v = 10 * v + (peek-'0');
             readch();
         } while (isdigit(peek));
         if (peek != '.')
+        {
             return Num(v);
+        }
         float x = v;
         float d = 10;
         for (;;)
@@ -200,8 +238,9 @@ Token Lexer::scan()
         words.insert(pair<string, Word>(b, w));
         return w;
     }
-
-    Token tok = Token(peek);
+    string stemp = "";
+    stemp.push_back(peek);
+    Token tok = Token(peek, stemp);
     peek = ' ';
     return tok;
 }

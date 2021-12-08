@@ -1,7 +1,11 @@
 all : compile 
 	
-compile:main.o lexer.o
+start_com:
+	@echo "------------------------------"
 	@echo "Start compile."
+	
+compile:start_com main.o lexer.o
+	
 	g++ -o main.out main.o lexer.o -O3
 	@echo "End compile."
 	@echo "------------------------------"
@@ -16,6 +20,7 @@ dep:
 	@echo "nothing"
 
 clean:
+	@echo "------------------------------"
 	@echo "Start clean."
 	rm -f main.out *.o
 	@echo "Finished clean."
